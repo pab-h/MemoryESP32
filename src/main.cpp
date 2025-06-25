@@ -62,8 +62,8 @@ void LDRConfig::toMemory(LDRConfig* config) {
 
 
 int readLDR(uint8_t pin, LDRConfig* config) {
-  long ldrValue    = analogRead(pin);
-  long ldrMapValue = map(
+  uint16_t ldrValue = analogRead(pin);
+  long ldrMapValue  = map(
     static_cast<long>(ldrValue), 
     0x00, 
     0xFF, 
