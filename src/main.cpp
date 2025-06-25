@@ -74,15 +74,75 @@ int readLDR(uint8_t pin, LDRConfig* config) {
   return static_cast<int>(ldrMapValue);
 }
 
+void configurationMode(LDRConfig* config) {
+
+  Serial.println("[MODO CONFIGURAÇÃO]");
+  Serial.println("Digite o valor MÍNIMO (0 a 4095): ");
+  
+  while (Serial.available() == 0) delay(10);
+
+  int minValue = Serial.readStringUntil('\n').toInt();
+
+  Serial.println("Valor mínimo recebido: " + String(minValue));
+  Serial.println("Digite o valor MÁXIMO (0 a 4095): ");
+
+  while (Serial.available() == 0) delay(10);
+
+  int maxValue = Serial.readStringUntil('\n').toInt();
+
+  Serial.println("Valor máximo recebido: " + String(maxValue));
+
+  if (minValue >= 0 && maxValue <= 4095 && minValue < maxValue) {
+    
+    config->minValue = minValue;
+    config->maxValue = maxValue;
+
+    LDRConfig::toMemory(config);
+    
+    Serial.println("[CONFIG] Configuração salva com sucesso!");
+  
+  } else {
+  
+    Serial.println("[ERRO] Valores inválidos. Tente novamente.");
+  
+  }
+
+  Serial.println("[FIM DO MODO CONFIGURAÇÃO]");
+}
+
 LDRConfig config;
+String    command;
+
 
 void setup() {
-
   Serial.begin(9600);
   EEPROM.begin(EEPROM_SIZE);
   
   LDRConfig::fromMemory(&config);
+}
+
+void loop() {
+
+  int ldrValue = readLDR(LDR_PIN, &config);
+  
+  Serial.print("LDR read = ");
+  Serial.println(ldrValue);
+
+  if (Serial.available() > 0) {
+
+    command = Serial.readStringUntil('\n');
+    command.trim();
+
+  }
+
+  if (command.equalsIgnoreCase("CONFIGURAR")) {
+
+    configurationMode(&config);
+    command = ""; 
+
+  }
+
+  delay(1000);
 
 }
 
-void loop() {}
