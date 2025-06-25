@@ -108,6 +108,16 @@ void configurationMode(LDRConfig* config) {
   }
 
   Serial.println("[FIM DO MODO CONFIGURAÇÃO]");
+
+}
+
+void resetConfig() {
+
+  Serial.println("[RESET] Apagando configuração da EEPROM...");
+  EEPROM.write(ADDRESS_CONFIG_FLAG, 0x00);
+  EEPROM.commit();
+  Serial.println("[RESET] Configuração apagada com sucesso!");
+
 }
 
 LDRConfig config;
@@ -124,7 +134,7 @@ void setup() {
 void loop() {
 
   int ldrValue = readLDR(LDR_PIN, &config);
-  
+
   Serial.print("LDR read = ");
   Serial.println(ldrValue);
 
@@ -135,12 +145,15 @@ void loop() {
 
   }
 
-  if (command.equalsIgnoreCase("CONFIGURAR")) {
-
+  if (command.equalsIgnoreCase("CONFIG")) {
     configurationMode(&config);
-    command = ""; 
-
   }
+
+  if (command.equalsIgnoreCase("RESET")) {
+    resetConfig();
+  }
+
+  command = ""; 
 
   delay(1000);
 
