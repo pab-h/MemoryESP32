@@ -62,6 +62,7 @@ void LDRConfig::toMemory(LDRConfig* config) {
 
 
 int readLDR(uint8_t pin, LDRConfig* config) {
+  
   uint16_t ldrValue = analogRead(pin);
   long ldrMapValue  = map(
     static_cast<long>(ldrValue), 
@@ -114,9 +115,22 @@ void configurationMode(LDRConfig* config) {
 void resetConfig() {
 
   Serial.println("[RESET] Apagando configuração da EEPROM...");
+
   EEPROM.write(ADDRESS_CONFIG_FLAG, 0x00);
   EEPROM.commit();
+
   Serial.println("[RESET] Configuração apagada com sucesso!");
+
+}
+
+void showconfig(LDRConfig* config) {
+
+    Serial.println("[MOSTRAR] Lendo configuração da EEPROM...");
+
+    LDRConfig::fromMemory(config);
+
+    Serial.println("[MOSTRAR] minValue = " + String(config->minValue));
+    Serial.println("[MOSTRAR] maxValue = " + String(config->maxValue));
 
 }
 
@@ -125,10 +139,12 @@ String    command;
 
 
 void setup() {
+
   Serial.begin(9600);
   EEPROM.begin(EEPROM_SIZE);
   
   LDRConfig::fromMemory(&config);
+
 }
 
 void loop() {
@@ -150,6 +166,10 @@ void loop() {
   }
 
   if (command.equalsIgnoreCase("RESET")) {
+    resetConfig();
+  }
+
+  if (command.equalsIgnoreCase("SHOW")) {
     resetConfig();
   }
 
