@@ -60,16 +60,19 @@ void LDRConfig::toMemory(LDRConfig* config) {
   
 }
 
+uint16_t readLDR(uint8_t pin) {
+  return analogRead(pin);
+}
 
-int readLDR(uint8_t pin, LDRConfig* config) {
-  
-  uint16_t ldrValue = analogRead(pin);
+int readLDRPercentage(uint8_t pin, LDRConfig* config) {
+
+  uint16_t ldrValue = readLDR(pin);
   long ldrMapValue  = map(
     static_cast<long>(ldrValue), 
-    0x00, 
-    0xFF, 
     static_cast<long>(config->minValue), 
-    static_cast<long>(config->maxValue)
+    static_cast<long>(config->maxValue),
+    0, 
+    100
   );  
 
   return static_cast<int>(ldrMapValue);
@@ -137,7 +140,6 @@ void showconfig(LDRConfig* config) {
 LDRConfig config;
 String    command;
 
-
 void setup() {
 
   Serial.begin(9600);
@@ -149,10 +151,14 @@ void setup() {
 
 void loop() {
 
-  int ldrValue = readLDR(LDR_PIN, &config);
+  uint16_t ldrValue      = readLDR(LDR_PIN);
+  int ldrPercentageValue = readLDRPercentage(LDR_PIN, &config);
 
   Serial.print("LDR read = ");
-  Serial.println(ldrValue);
+  Serial.print(ldrValue);
+  Serial.print(", ");
+  Serial.print(ldrPercentageValue);
+  Serial.println("%");
 
   if (Serial.available() > 0) {
 
