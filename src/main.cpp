@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <EEPROM.h>
 
-#define LDR_PIN     18
+#define LDR_PIN             34
 
 #define EEPROM_SIZE         0xFF
 #define ADDRESS_CONFIG_FLAG 0x00
@@ -24,7 +24,7 @@ class LDRConfig {
 
 LDRConfig::LDRConfig() {
 
-  this->maxValue = 0x00;
+  this->maxValue = 0xFFF;
   this->minValue = 0x00;
 
 }
@@ -126,7 +126,7 @@ void resetConfig() {
 
 }
 
-void showconfig(LDRConfig* config) {
+void showConfig(LDRConfig* config) {
 
     Serial.println("[MOSTRAR] Lendo configuração da EEPROM...");
 
@@ -176,7 +176,7 @@ void loop() {
   }
 
   if (command.equalsIgnoreCase("SHOW")) {
-    resetConfig();
+    showConfig(&config);
   }
 
   command = ""; 
