@@ -115,12 +115,15 @@ void configurationMode(LDRConfig* config) {
 
 }
 
-void resetConfig() {
+void resetConfig(LDRConfig* config) {
 
   Serial.println("[RESET] Apagando configuração da EEPROM...");
 
   EEPROM.write(ADDRESS_CONFIG_FLAG, 0x00);
   EEPROM.commit();
+
+  config->minValue = 0;
+  config->maxValue = 0xFF;
 
   Serial.println("[RESET] Configuração apagada com sucesso!");
 
@@ -172,7 +175,7 @@ void loop() {
   }
 
   if (command.equalsIgnoreCase("RESET")) {
-    resetConfig();
+    resetConfig(&config);
   }
 
   if (command.equalsIgnoreCase("SHOW")) {
